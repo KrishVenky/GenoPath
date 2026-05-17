@@ -1195,11 +1195,12 @@ function initGraph() {
   // Stop any prior simulation so its timer doesn't keep ticking against stale selections.
   if (state.simulation) state.simulation.stop();
   state.simulation = d3.forceSimulation([])
-    .force('link', d3.forceLink().id(d => d.id).distance(d => d.trail ? 80 : 70).strength(0.5))
-    .force('charge', d3.forceManyBody().strength(-280))
+    .alphaDecay(0.05)
+    .force('link', d3.forceLink().id(d => d.id).distance(d => d.trail ? 80 : 70).strength(0.6))
+    .force('charge', d3.forceManyBody().strength(-220))
     .force('center', d3.forceCenter(w/2, h/2))
-    .force('collide', d3.forceCollide().radius(d => (NODE_RADIUS[d.type] || 12) + 14))
-    .alpha(0) // hold until first sync
+    .force('collide', d3.forceCollide().radius(d => (NODE_RADIUS[d.type] || 12) + 12))
+    .alpha(0)
     .on('tick', ticked);
 
   // resize handling
@@ -1335,64 +1336,55 @@ function addEdge(a, b, trail = false) {
 function syncSimulation(obs) {
   const cur = obs.current_node;
   const trailSet = new Set(state.trail);
+  const exclusionSet = new Set(Object.keys(obs.gene_absent_phenotypes || {}));
 
-  // Build d3 nodes from knownNodes; preserve x/y for existing
-  const oldById = new Map(state.d3Nodes.map(n => [n.id, n]));
-  state.d3Nodes = [];
+  // Keep a live lookup of existing d3 node objects.
+  // D3's link force resolves source/target strings to object references and
+  // then stores those references. If we throw out the objects and create new
+  // ones, every link becomes a dangling pointer → broken connectors.
+  // Fix: mutate existing objects in-place; only push brand-new nodes.
+  const nodeById = new Map(state.d3Nodes.map(n => [n.id, n]));
+
   state.knownNodes.forEach(n => {
-    const old = oldById.get(n.id);
-    const isCurrent = (n.id === cur.id);
-    const isTrail = trailSet.has(n.id);
-    const isFlagged = obs.flagged_variant && (n.id === obs.flagged_variant.id || n.id === ('VAR:' + obs.flagged_variant.allele_id));
-    // exclusion (gene listed in gene_absent_phenotypes)
-    const exclusionSet = new Set(Object.keys(obs.gene_absent_phenotypes || {}));
-    const geneSym = n.id.startsWith('GENE:') ? n.id.slice(5) : null;
-    const isExcluded = geneSym && exclusionSet.has(geneSym);
+    const geneSym    = n.id.startsWith('GENE:') ? n.id.slice(5) : null;
+    const isCurrent  = (n.id === cur.id);
+    const isTrail    = trailSet.has(n.id);
+    const isFlagged  = obs.flagged_variant &&
+      (n.id === obs.flagged_variant.id || n.id === ('VAR:' + obs.flagged_variant.allele_id));
+    const isExcluded = !!(geneSym && exclusionSet.has(geneSym));
 
-    const node = {
-      id: n.id,
-      name: n.name,
-      type: n.type,
-      description: n.description,
-      isCurrent,
-      isTrail,
-      isFlagged,
-      isExcluded,
-      newlyAdded: n.newlyAdded,
-    };
-    if (old) {
-      node.x = old.x; node.y = old.y;
-      node.vx = old.vx; node.vy = old.vy;
-    } else if (isCurrent && obs.trail.length > 0) {
-      // start near previous current
-      const prev = oldById.get(obs.trail[obs.trail.length-2]?.id);
-      const w = document.getElementById('graph').clientWidth;
-      const h = document.getElementById('graph').clientHeight;
-      if (prev) { node.x = prev.x + (Math.random()-0.5)*40; node.y = prev.y + (Math.random()-0.5)*40; }
-      else { node.x = w/2; node.y = h/2; }
+    const existing = nodeById.get(n.id);
+    if (existing) {
+      existing.name       = n.name;
+      existing.type       = n.type;
+      existing.isCurrent  = isCurrent;
+      existing.isTrail    = isTrail;
+      existing.isFlagged  = isFlagged;
+      existing.isExcluded = isExcluded;
     } else {
-      const w = document.getElementById('graph').clientWidth;
-      const h = document.getElementById('graph').clientHeight;
-      // start near current node
-      const curD3 = oldById.get(cur.id);
-      if (curD3) {
+      const el = document.getElementById('graph');
+      const w = el.clientWidth, h = el.clientHeight;
+      const anchor = nodeById.get(cur.id);
+      let x = w / 2, y = h / 2;
+      if (anchor && anchor.x != null) {
         const ang = Math.random() * Math.PI * 2;
-        node.x = curD3.x + Math.cos(ang) * 100;
-        node.y = curD3.y + Math.sin(ang) * 100;
-      } else {
-        node.x = w/2 + (Math.random()-0.5)*200;
-        node.y = h/2 + (Math.random()-0.5)*200;
+        x = anchor.x + Math.cos(ang) * 80;
+        y = anchor.y + Math.sin(ang) * 80;
       }
+      state.d3Nodes.push({
+        id: n.id, name: n.name, type: n.type, description: n.description,
+        isCurrent, isTrail, isFlagged, isExcluded,
+        x, y, vx: 0, vy: 0,
+      });
     }
-    state.d3Nodes.push(node);
     n.newlyAdded = false;
   });
 
-  // Filter out links whose endpoints don't exist
-  const nodeSet = new Set(state.d3Nodes.map(n=>n.id));
+  // Drop links whose endpoints were removed (shouldn't happen, but defensive).
+  const nodeSet = new Set(state.d3Nodes.map(n => n.id));
   state.d3Links = state.d3Links.filter(l => {
-    const sId = l.source.id || l.source;
-    const tId = l.target.id || l.target;
+    const sId = l.source.id !== undefined ? l.source.id : l.source;
+    const tId = l.target.id !== undefined ? l.target.id : l.target;
     return nodeSet.has(sId) && nodeSet.has(tId);
   });
 
@@ -1400,10 +1392,9 @@ function syncSimulation(obs) {
 
   state.simulation.nodes(state.d3Nodes);
   state.simulation.force('link').links(state.d3Links);
-  state.simulation.alpha(0.9).alphaTarget(0).restart();
-  // Belt-and-suspenders: force at least one tick render in case the timer is slow to wake.
+  // Low alpha: existing layout barely disturbed; new nodes settle into place.
+  state.simulation.alpha(0.3).alphaTarget(0).restart();
   ticked();
-  requestAnimationFrame(ticked);
 }
 
 function renderGraph() {

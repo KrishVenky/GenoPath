@@ -768,8 +768,8 @@
 
   /* =====================================================================
      MOBILE RESPONSIVE (≤ 767px)
-     Phone enters via /camera → redirected with ?episode_id → watches
-     the graph run. Left panel (patient input) not needed during playback.
+     Layout order: mobile-bar → graph → left panel → right panel
+     Desktop layout is completely untouched (3-column grid).
      ===================================================================== */
 
   /* Mobile top bar — hidden on desktop */
@@ -783,12 +783,9 @@
     flex-shrink: 0;
     gap: 10px;
   }
-  .mobile-bar .mb-brand { font-size: .85rem; font-weight: 700; color: var(--primary-2); }
+  .mobile-bar .mb-brand { font-size: .9rem; font-weight: 700; color: var(--primary-2); }
   .mobile-bar .mb-status { display: flex; align-items: center; gap: 6px; font-size: .75rem; color: var(--muted); }
-  .mobile-bar .mb-counter {
-    font-size: .75rem; color: var(--muted);
-    display: flex; align-items: center; gap: 8px;
-  }
+  .mobile-bar .mb-counter { font-size: .75rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
   .mobile-bar .mb-step { font-weight: 600; color: var(--text); }
   .mobile-bar .mb-reward { color: var(--good); font-weight: 600; }
 
@@ -797,7 +794,7 @@
 
     .mobile-bar { display: flex; }
 
-    /* Stack the three panels vertically */
+    /* ---- App shell: vertical flex, panels stacked ---- */
     .app {
       display: flex;
       flex-direction: column;
@@ -806,59 +803,98 @@
       width: 100%;
     }
 
-    /* Left panel: hide entirely — /camera handles intake on mobile */
-    .panel.left { display: none; }
+    /* Order: graph (1) → left/controls (2) → right/data (3) */
+    .panel.center { order: 1; }
+    .panel.left   { order: 2; }
+    .panel.right  { order: 3; }
 
-    /* Center: graph viewport, fixed height */
+    /* ---- Graph panel ---- */
     .panel.center {
-      height: 52vw;
-      min-height: 260px;
-      max-height: 380px;
+      height: 56vw;
+      min-height: 280px;
+      max-height: 360px;
       overflow: hidden;
       border-right: none;
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
 
-    /* Hide log cards on mobile — too cramped; breadcrumb covers it */
-    .agent-log { display: none !important; }
+    /* Hide overlays inside graph — mobile bar covers step/reward */
+    .overlay { display: none; }
 
-    /* Breadcrumb scrollable horizontally */
-    .breadcrumb { flex-wrap: nowrap; overflow-x: auto; }
-
-    /* Hide legend on mobile */
+    /* Breadcrumb: single scrollable line */
+    .breadcrumb { flex-wrap: nowrap; overflow-x: auto; white-space: nowrap; }
     .legend { display: none; }
 
-    /* Overlays: smaller text */
-    .overlay { padding: 8px 10px; font-size: 11px; }
-    .step-num, #reward-num { font-size: 1.1rem; }
+    /* Agent log: hide (no room) */
+    .agent-log { display: none !important; }
 
-    /* Right panel: scrollable list fills remaining space */
+    /* ---- Left panel (controls) ---- */
+    .panel.left {
+      display: flex;        /* show it on mobile */
+      height: auto;
+      overflow: visible;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    /* Hide logo + status row — mobile bar covers it */
+    .panel.left .brand      { display: none; }
+    .panel.left .status-row { display: none; }
+
+    /* Collapse phone + model accordions — not needed on mobile */
+    .panel.left details { display: none; }
+
+    .panel.left .panel-scroll {
+      padding: 14px 16px 16px;
+      overflow: visible;
+    }
+
+    /* Make textarea and button full-width, comfortable touch targets */
+    .panel.left .input {
+      width: 100%;
+      min-height: 70px;
+      font-size: .9rem;
+    }
+    .panel.left .cta {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      margin-top: 12px;
+    }
+    .panel.left .pill-row button {
+      flex: 1;
+      padding: 8px 4px;
+      font-size: .8rem;
+    }
+
+    /* ---- Right panel (data) ---- */
     .panel.right {
       border-left: none;
-      flex: 1;
-      overflow-y: auto;
-      min-height: 0;
+      height: auto;
+      overflow: visible;
+      flex-shrink: 0;
     }
-    .panel-scroll { padding: 14px 14px 40px; }
+    .panel.right .panel-scroll { padding: 14px 16px 40px; }
 
-    /* Wider pheno tags on mobile */
+    /* Pheno tags */
     .pheno-tag { font-size: .78rem; padding: 4px 9px; }
 
-    /* Candidate table: hide Score column header, compress */
+    /* Candidate table: hide Score column to fit width */
     .cand-table th:nth-child(3),
     .cand-table td:nth-child(3) { display: none; }
 
-    /* Result card full width */
+    /* Result card */
     .result-card { margin: 0; border-radius: 10px; }
 
-    /* Tooltip: pin to bottom on mobile */
+    /* Tooltip: bottom sheet */
     .tooltip {
       position: fixed;
       bottom: 0; left: 0; right: 0; top: auto;
       border-radius: 12px 12px 0 0;
       width: 100%;
       max-width: 100%;
+      z-index: 200;
     }
   }
 </style>

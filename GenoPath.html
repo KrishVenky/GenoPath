@@ -1,0 +1,1961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>GenoPath · Rare Disease Reasoning</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  :root {
+    --bg:        #0a0f1e;
+    --panel:     #111827;
+    --panel-2:   #0d1322;
+    --card:      #1f2937;
+    --card-2:    #19202e;
+    --border:    #243044;
+    --border-2:  #374151;
+    --primary:   #6366f1;
+    --primary-2: #818cf8;
+    --accent:    #f59e0b;
+    --accent-2:  #fbbf24;
+    --text:      #f9fafb;
+    --muted:     #9ca3af;
+    --dim:       #6b7280;
+    --good:      #34d399;
+    --bad:       #f87171;
+    --warn:      #fb923c;
+
+    --c-phenotype: #60a5fa;
+    --c-disease:   #f472b6;
+    --c-gene:      #34d399;
+    --c-variant:   #fb923c;
+    --c-pathway:   #a78bfa;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  /* ------- LAYOUT ------- */
+  .app {
+    display: grid;
+    grid-template-columns: 280px 1fr 340px;
+    height: 100vh;
+    width: 100vw;
+  }
+  .panel {
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .panel.right {
+    border-right: none;
+    border-left: 1px solid var(--border);
+  }
+  .panel-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 18px 18px 28px;
+  }
+  .panel-scroll::-webkit-scrollbar { width: 8px; }
+  .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+  .panel-scroll::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+  .panel-scroll::-webkit-scrollbar-thumb:hover { background: #2a3a55; }
+
+  /* ------- LEFT PANEL ------- */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-mark {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary), #4f46e5 70%, #4338ca);
+    display: grid; place-items: center;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 6px 18px -8px rgba(99,102,241,0.6);
+    position: relative;
+  }
+  .brand-mark svg { display: block; }
+  .brand-name {
+    font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
+  }
+  .brand-sub {
+    font-size: 10.5px; color: var(--muted); margin-top: 1px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .status-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .status-dot {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted);
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--dim);
+    box-shadow: 0 0 0 0 rgba(0,0,0,0);
+  }
+  .dot.online {
+    background: var(--good);
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);
+    animation: pulse-dot 2.2s ease-out infinite;
+  }
+  .dot.offline { background: var(--bad); }
+  .dot.demo { background: var(--accent); }
+  @keyframes pulse-dot {
+    0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  }
+  .status-meta {
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 6px 0 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title .count {
+    color: var(--dim); font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 11px;
+  }
+
+  textarea.input {
+    width: 100%;
+    min-height: 88px;
+    resize: vertical;
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color .15s, background .15s;
+  }
+  textarea.input::placeholder { color: var(--dim); }
+  textarea.input:focus {
+    border-color: var(--primary);
+    background: #0f1626;
+  }
+
+  .pill-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    background: var(--card-2);
+    padding: 4px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+  }
+  .pill-row button {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .pill-row button:hover { color: var(--text); }
+  .pill-row button.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset, 0 4px 14px -6px rgba(99,102,241,0.7);
+  }
+
+  .cta {
+    margin-top: 14px;
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    border: 0;
+    padding: 12px 14px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset, 0 8px 20px -8px rgba(99,102,241,0.55);
+    transition: transform .08s, background .15s, box-shadow .15s;
+  }
+  .cta:hover { background: var(--primary-2); }
+  .cta:active { transform: translateY(1px); }
+  .cta:disabled {
+    background: #2a3349; color: var(--muted); cursor: not-allowed;
+    box-shadow: none;
+  }
+  .cta .spinner {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+    display: none;
+  }
+  .cta.loading .spinner { display: inline-block; }
+  .cta.loading .cta-arrow { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .collapsible {
+    margin-top: 22px;
+    border-top: 1px dashed var(--border);
+    padding-top: 16px;
+  }
+  .collapsible summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .collapsible summary::-webkit-details-marker { display: none; }
+  .collapsible summary .chev {
+    transition: transform .2s;
+    color: var(--dim);
+  }
+  .collapsible[open] summary .chev { transform: rotate(90deg); }
+  .codeblock {
+    margin-top: 10px;
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .codeblock .kw { color: var(--primary-2); }
+  .codeblock .str { color: #a7f3d0; }
+  .codeblock .num { color: var(--accent-2); }
+  .codeblock .com { color: var(--dim); }
+  .hint {
+    margin-top: 10px;
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ------- CENTER PANEL ------- */
+  .center {
+    position: relative;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(99,102,241,0.06), transparent 55%),
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: auto, 32px 32px, 32px 32px;
+    pointer-events: none;
+  }
+  #graph {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+  .center-header {
+    position: absolute;
+    top: 16px; left: 18px; right: 18px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+    pointer-events: auto;
+    max-width: 70%;
+    overflow: hidden;
+  }
+  .breadcrumb .crumb {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .breadcrumb .crumb-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .breadcrumb .crumb.current { color: var(--text); font-weight: 600; }
+  .breadcrumb .sep { color: var(--dim); font-size: 10px; }
+  .empty-breadcrumb {
+    color: var(--dim);
+    font-style: italic;
+  }
+
+  .legend {
+    display: flex; gap: 10px;
+    background: rgba(17,24,39,0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 11px;
+    pointer-events: auto;
+  }
+  .legend-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted);
+  }
+  .legend-swatch {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  .overlay {
+    position: absolute;
+    background: rgba(17,24,39,0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    z-index: 3;
+    box-shadow: 0 8px 24px -10px rgba(0,0,0,0.5);
+  }
+  .overlay.step {
+    bottom: 18px; left: 18px;
+    min-width: 220px;
+  }
+  .overlay.reward {
+    bottom: 18px; right: 18px;
+  }
+  .overlay-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .step-line {
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .step-num {
+    font-size: 22px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .step-of {
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+  .progress {
+    margin-top: 7px;
+    height: 4px;
+    background: #1e293b;
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    border-radius: 999px;
+    width: 0%;
+    transition: width .4s cubic-bezier(.2,.7,.2,1);
+  }
+  .reward-val {
+    display: flex; align-items: baseline; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .reward-val .delta {
+    font-size: 11px; color: var(--good);
+    font-weight: 500;
+  }
+  .reward-val .delta.neg { color: var(--bad); }
+
+  .agent-log {
+    position: absolute;
+    top: 70px;
+    left: 18px;
+    max-width: 380px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .log-card {
+    background: rgba(17,24,39,0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--primary);
+    border-radius: 8px;
+    padding: 9px 12px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--text);
+    box-shadow: 0 8px 24px -10px rgba(0,0,0,0.45);
+    animation: log-in .35s cubic-bezier(.2,.7,.2,1);
+    pointer-events: auto;
+    transition: opacity .4s;
+  }
+  .log-card.fade { opacity: 0.45; }
+  .log-card .log-action {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary-2);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .log-card.action-flag_causal { border-left-color: var(--accent); }
+  .log-card.action-flag_causal .log-action { color: var(--accent-2); }
+  .log-card.action-backtrack { border-left-color: var(--bad); }
+  .log-card.action-backtrack .log-action { color: #fda4af; }
+  @keyframes log-in {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* graph nodes */
+  .node-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    fill: var(--text);
+    pointer-events: none;
+    text-anchor: middle;
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+  .node-sublabel {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    fill: var(--muted);
+    pointer-events: none;
+    text-anchor: middle;
+  }
+  .link {
+    stroke: #334155;
+    stroke-width: 1.2;
+    transition: stroke .3s, stroke-width .3s, opacity .3s;
+  }
+  .link.trail {
+    stroke: var(--accent);
+    stroke-width: 1.6;
+    stroke-dasharray: 5 4;
+    animation: dash-flow 1.4s linear infinite;
+    opacity: 0.9;
+  }
+  @keyframes dash-flow {
+    to { stroke-dashoffset: -18; }
+  }
+  .node { cursor: pointer; }
+  .node-glow {
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.35; r: 22; }
+    50% { opacity: 0.65; r: 28; }
+  }
+  @keyframes flag-glow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+  }
+  @keyframes node-pop {
+    0%   { transform: scale(0); }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  @keyframes link-fade {
+    from { stroke-opacity: 0; }
+    to   { stroke-opacity: 1; }
+  }
+
+  .empty-state {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+    color: var(--muted);
+    text-align: center;
+    z-index: 2;
+  }
+  .empty-icon {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(99,102,241,0.04));
+    border: 1px solid rgba(99,102,241,0.25);
+    display: grid; place-items: center;
+    margin-bottom: 18px;
+  }
+  .empty-title {
+    color: var(--text); font-size: 16px; font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .empty-sub {
+    font-size: 12.5px; max-width: 360px; line-height: 1.6;
+  }
+
+  /* ------- RIGHT PANEL ------- */
+  .pheno-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .pheno-tag {
+    background: rgba(96, 165, 250, 0.12);
+    color: #93c5fd;
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 500;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .pheno-tag .tag-id {
+    color: #60a5fa;
+    opacity: 0.7;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+  }
+
+  .exclusion-card {
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--warn);
+    border-radius: 7px;
+    padding: 9px 11px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .exclusion-card .gene-name {
+    font-weight: 600;
+    color: var(--warn);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    margin-bottom: 2px;
+    letter-spacing: 0.01em;
+  }
+  .exclusion-card .lacks {
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .exclusion-card .lacks strong { color: #cbd5e1; font-weight: 500; }
+
+  table.variants {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+  table.variants thead th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 7px 6px 7px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  table.variants thead th:hover { color: var(--text); }
+  table.variants thead th .sort {
+    color: var(--dim);
+    margin-left: 2px;
+  }
+  table.variants tbody td {
+    padding: 8px 6px 8px 0;
+    border-bottom: 1px solid #1a2233;
+    vertical-align: middle;
+  }
+  table.variants tbody tr:hover td { background: #131c2e; }
+  table.variants tbody tr.flagged td {
+    background: rgba(245, 158, 11, 0.08);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+  .gene-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .vtype {
+    color: var(--muted);
+    font-size: 10.5px;
+  }
+  .score-cell { width: 80px; }
+  .score-bar {
+    height: 4px;
+    background: #1e293b;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .score-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    transition: width .4s ease-out;
+  }
+  .score-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .sig {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .sig.path { background: rgba(248, 113, 113, 0.12); color: #fca5a5; }
+  .sig.likely { background: rgba(251, 146, 60, 0.12); color: #fdba74; }
+  .sig.vus { background: rgba(156, 163, 175, 0.12); color: #cbd5e1; }
+  .sig.benign { background: rgba(52, 211, 153, 0.12); color: #6ee7b7; }
+
+  .empty-mini {
+    padding: 10px 12px;
+    border: 1px dashed var(--border-2);
+    border-radius: 7px;
+    font-size: 11.5px;
+    color: var(--dim);
+    text-align: center;
+  }
+
+  /* result card */
+  .result-card {
+    margin-top: 10px;
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    animation: result-in .5s cubic-bezier(.2,.7,.2,1);
+  }
+  @keyframes result-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result-card.success {
+    background: linear-gradient(160deg, rgba(52, 211, 153, 0.18), rgba(52, 211, 153, 0.04) 70%);
+    border-color: rgba(52, 211, 153, 0.35);
+  }
+  .result-card.fail {
+    background: linear-gradient(160deg, rgba(248, 113, 113, 0.18), rgba(248, 113, 113, 0.04) 70%);
+    border-color: rgba(248, 113, 113, 0.35);
+  }
+  .result-card.timeout {
+    background: linear-gradient(160deg, rgba(156, 163, 175, 0.18), rgba(156, 163, 175, 0.04) 70%);
+    border-color: rgba(156, 163, 175, 0.35);
+  }
+  .result-head {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .result-card.success .result-head { color: #6ee7b7; }
+  .result-card.fail .result-head { color: #fca5a5; }
+  .result-card.timeout .result-head { color: #d1d5db; }
+  .result-row {
+    display: flex; justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+  }
+  .result-row .k { color: var(--muted); }
+  .result-row .v {
+    color: var(--text); font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+  }
+  .result-reason {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px;
+    color: #e5e7eb;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .result-reason::before { content: '"'; opacity: 0.4; margin-right: 1px; }
+  .result-reason::after { content: '"'; opacity: 0.4; margin-left: 1px; }
+
+  /* tooltip */
+  .tooltip {
+    position: fixed;
+    background: rgba(15, 22, 38, 0.96);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+    pointer-events: none;
+    z-index: 10;
+    max-width: 260px;
+    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.6);
+    display: none;
+  }
+  .tooltip .ttype {
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em;
+    font-weight: 600; margin-bottom: 2px;
+  }
+  .tooltip .tname {
+    font-weight: 600; color: var(--text); margin-bottom: 3px;
+    font-size: 12.5px;
+  }
+  .tooltip .tdesc {
+    color: var(--muted); line-height: 1.45;
+  }
+  .tooltip .tid {
+    color: var(--dim); font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============= LEFT PANEL ============= -->
+  <aside class="panel left">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 2C5 4 5 6 3 8C5 10 5 12 3 14" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M13 2C11 4 11 6 13 8C11 10 11 12 13 14" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="4.5" y1="3.5" x2="11.5" y2="3.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="4.5" y1="8" x2="11.5" y2="8" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="4.5" y1="12.5" x2="11.5" y2="12.5" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">GenoPath</div>
+        <div class="brand-sub">Reasoning Agent</div>
+      </div>
+    </div>
+
+    <div class="status-row">
+      <span class="status-dot"><span id="conn-dot" class="dot"></span><span id="conn-label">Connecting…</span></span>
+      <span class="status-meta" id="conn-meta">localhost:8000</span>
+    </div>
+
+    <div class="panel-scroll">
+
+      <div class="section-title">Patient Input</div>
+      <textarea id="phenotype-input" class="input" placeholder="seizures, hypotonia, global developmental delay">seizures, hypotonia, global developmental delay</textarea>
+
+      <div class="section-title" style="margin-top: 16px;">Task Type</div>
+      <div class="pill-row" id="task-pills">
+        <button data-task="monogenic" class="active">Monogenic</button>
+        <button data-task="oligogenic">Oligogenic</button>
+        <button data-task="phenotype_mismatch">Mismatch</button>
+      </div>
+
+      <button id="run-btn" class="cta">
+        <span class="spinner"></span>
+        <span class="cta-label">Run Analysis</span>
+        <span class="cta-arrow">→</span>
+      </button>
+
+      <details class="collapsible">
+        <summary>
+          Connect Phone
+          <span class="chev">›</span>
+        </summary>
+        <div class="codeblock"><span class="com"># Any Android phone running Gemma</span>
+<span class="com"># (AI Edge Gallery or LiteRT APK)</span>
+
+<span class="kw">POST</span> http://<span id="local-ip">192.168.1.42</span>:8000/intake
+
+{
+  <span class="str">"raw_phenotypes"</span>: [
+    <span class="str">"seizures"</span>,
+    <span class="str">"hypotonia"</span>
+  ],
+  <span class="str">"task_type"</span>: <span class="str">"monogenic"</span>,
+  <span class="str">"seed"</span>: <span class="num">null</span>
+}</div>
+        <div class="hint">Point your phone's app at this LAN address and stream phenotypes from anywhere in the clinic.</div>
+      </details>
+
+      <details class="collapsible">
+        <summary>
+          Model
+          <span class="chev">›</span>
+        </summary>
+        <div class="codeblock"><span class="com">runtime</span>     gemma4:e4b · Ollama
+<span class="com">graph</span>       <span id="graph-size">57,124</span> nodes
+<span class="com">max steps</span>   15 per episode
+<span class="com">latency</span>     ~180ms / hop</div>
+      </details>
+    </div>
+  </aside>
+
+  <!-- ============= CENTER PANEL ============= -->
+  <main class="panel center" style="border-right: 1px solid var(--border);">
+    <div class="grid-bg"></div>
+
+    <div class="center-header">
+      <div class="breadcrumb" id="breadcrumb">
+        <span class="empty-breadcrumb">Awaiting episode…</span>
+      </div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-swatch" style="background:#60a5fa"></span>Phenotype</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#f472b6"></span>Disease</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#34d399"></span>Gene</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#fb923c"></span>Variant</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#a78bfa"></span>Pathway</span>
+      </div>
+    </div>
+
+    <div class="agent-log" id="agent-log"></div>
+
+    <svg id="graph"></svg>
+
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6" cy="6" r="2.5"/>
+          <circle cx="18" cy="6" r="2.5"/>
+          <circle cx="12" cy="14" r="2.5"/>
+          <circle cx="6" cy="20" r="2"/>
+          <circle cx="18" cy="20" r="2"/>
+          <path d="M7.7 7.3 L10.5 12.7"/>
+          <path d="M16.3 7.3 L13.5 12.7"/>
+          <path d="M10.7 15.7 L7 18.5"/>
+          <path d="M13.3 15.7 L17 18.5"/>
+        </svg>
+      </div>
+      <div class="empty-title">Ready to traverse</div>
+      <div class="empty-sub">Enter the patient's phenotypes on the left and run the analysis. The agent's path through the 57,124-node graph will unfold here in real time.</div>
+    </div>
+
+    <div class="overlay step">
+      <div class="overlay-label">Episode Progress</div>
+      <div class="step-line">
+        <span class="step-num" id="step-num">0</span>
+        <span class="step-of">/ <span id="max-steps">15</span></span>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div class="overlay reward">
+      <div class="overlay-label">Cumulative Reward</div>
+      <div class="reward-val">
+        <span id="reward-num">+0.00</span>
+        <span class="delta" id="reward-delta"></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============= RIGHT PANEL ============= -->
+  <aside class="panel right">
+    <div class="panel-scroll">
+      <div class="section-title">Patient Phenotypes <span class="count" id="pheno-count">0</span></div>
+      <div class="pheno-tags" id="pheno-tags">
+        <div class="empty-mini" style="width:100%">No phenotypes loaded</div>
+      </div>
+
+      <div class="section-title" style="margin-top: 22px;">Exclusion Signals <span class="count" id="excl-count">0</span></div>
+      <div id="exclusions">
+        <div class="empty-mini">No genes ruled out yet</div>
+      </div>
+
+      <div class="section-title" style="margin-top: 22px;">Candidate Variants <span class="count" id="cand-count">0</span></div>
+      <div id="candidates">
+        <div class="empty-mini">Candidates appear as the agent explores</div>
+      </div>
+
+      <div id="result-slot"></div>
+    </div>
+  </aside>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const state = {
+  episodeId: null,
+  task: 'monogenic',
+  steps: [],          // observation history
+  current: null,      // latest observation
+  trail: [],          // node ids in order
+  knownNodes: new Map(), // id -> node (full record)
+  edges: new Set(),   // "a||b" undirected
+  d3Nodes: [],
+  d3Links: [],
+  simulation: null,
+  sortKey: 'pathogenicity_score',
+  sortDir: -1,
+  running: false,
+  mode: 'idle',       // idle | live | demo
+  sse: null,
+  demoTimer: null,
+};
+
+const NODE_COLOR = {
+  phenotype: '#60a5fa',
+  disease:   '#f472b6',
+  gene:      '#34d399',
+  variant:   '#fb923c',
+  pathway:   '#a78bfa',
+};
+const NODE_RADIUS = {
+  phenotype: 11,
+  disease:   14,
+  gene:      13,
+  variant:   12,
+  pathway:   11,
+};
+
+const HOST = 'http://localhost:8000';
+
+/* =====================================================================
+   HEALTH / CONNECTION
+   ===================================================================== */
+async function checkHealth() {
+  const dot = document.getElementById('conn-dot');
+  const label = document.getElementById('conn-label');
+  const meta = document.getElementById('conn-meta');
+  try {
+    const r = await fetch(HOST + '/health', { signal: AbortSignal.timeout(1500) });
+    if (!r.ok) throw new Error('not ok');
+    const data = await r.json();
+    dot.className = 'dot online';
+    label.textContent = 'Backend online';
+    meta.textContent = (data.model || 'gemma4:e4b');
+    if (data.graph_nodes) {
+      document.getElementById('graph-size').textContent = data.graph_nodes.toLocaleString();
+    }
+    if (data.local_ip) {
+      const ipEl = document.getElementById('local-ip');
+      if (ipEl) ipEl.textContent = data.local_ip;
+    }
+    state.mode = 'live';
+  } catch (e) {
+    dot.className = 'dot demo';
+    label.textContent = 'Demo mode';
+    meta.textContent = 'backend offline';
+    state.mode = 'demo';
+  }
+}
+
+/* =====================================================================
+   UI WIRING
+   ===================================================================== */
+document.querySelectorAll('#task-pills button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#task-pills button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.task = b.dataset.task;
+  });
+});
+
+document.getElementById('run-btn').addEventListener('click', runAnalysis);
+
+async function runAnalysis() {
+  if (state.running) return;
+  const raw = document.getElementById('phenotype-input').value.trim();
+  if (!raw) return;
+  const phenotypes = raw.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+
+  resetEpisode();
+  const btn = document.getElementById('run-btn');
+  btn.classList.add('loading');
+  btn.querySelector('.cta-label').textContent = 'Running…';
+  btn.disabled = true;
+  state.running = true;
+  document.getElementById('empty-state').style.display = 'none';
+
+  if (state.mode === 'live') {
+    try {
+      const r = await fetch(HOST + '/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ raw_phenotypes: phenotypes, task_type: state.task, seed: null })
+      });
+      const first = await r.json();
+      state.episodeId = first.episode_id || first.id || 'ep-' + Date.now();
+      if (first.first_observation) ingestStep(first.first_observation);
+      openSSE();
+    } catch (e) {
+      console.warn('intake failed, falling back to demo', e);
+      state.mode = 'demo';
+      runDemo(phenotypes);
+    }
+  } else {
+    runDemo(phenotypes);
+  }
+}
+
+function openSSE() {
+  if (state.sse) state.sse.close();
+  const url = `${HOST}/episode/stream?episode_id=${encodeURIComponent(state.episodeId)}`;
+  const es = new EventSource(url);
+  state.sse = es;
+  es.onmessage = (ev) => {
+    try {
+      const obs = JSON.parse(ev.data);
+      ingestStep(obs);
+      if (obs.done) { es.close(); finishRun(); }
+    } catch (err) { console.error(err); }
+  };
+  es.onerror = () => { es.close(); finishRun(); };
+}
+
+function resetEpisode() {
+  if (state.sse) { state.sse.close(); state.sse = null; }
+  if (state.demoTimer) { clearTimeout(state.demoTimer); state.demoTimer = null; }
+  state.steps = [];
+  state.current = null;
+  state.trail = [];
+  state.knownNodes.clear();
+  state.edges.clear();
+  state.d3Nodes = [];
+  state.d3Links = [];
+  document.getElementById('agent-log').innerHTML = '';
+  document.getElementById('result-slot').innerHTML = '';
+  document.getElementById('step-num').textContent = '0';
+  document.getElementById('reward-num').textContent = '+0.00';
+  document.getElementById('reward-delta').textContent = '';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('breadcrumb').innerHTML = '<span class="empty-breadcrumb">Awaiting episode…</span>';
+  initGraph();
+  renderRightPanel();
+}
+
+function finishRun() {
+  state.running = false;
+  const btn = document.getElementById('run-btn');
+  btn.classList.remove('loading');
+  btn.querySelector('.cta-label').textContent = 'Run Analysis';
+  btn.disabled = false;
+}
+
+/* =====================================================================
+   INGEST STEP (single source of truth)
+   ===================================================================== */
+function ingestStep(obs) {
+  state.steps.push(obs);
+  const prev = state.current;
+  state.current = obs;
+
+  // animate counters
+  animateNumber('step-num', obs.step);
+  animateNumber('reward-num', obs.cumulative_reward, true);
+
+  const delta = prev ? (obs.cumulative_reward - prev.cumulative_reward) : obs.cumulative_reward;
+  const dEl = document.getElementById('reward-delta');
+  if (Math.abs(delta) > 0.0001) {
+    dEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(2);
+    dEl.className = 'delta' + (delta < 0 ? ' neg' : '');
+  } else {
+    dEl.textContent = '';
+  }
+
+  const pct = Math.min(100, (obs.step / (obs.max_steps || 15)) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('max-steps').textContent = obs.max_steps || 15;
+
+  // graph update
+  updateGraphFromObs(obs);
+  renderBreadcrumb(obs);
+  pushLog(obs);
+  renderRightPanel();
+
+  if (obs.done) {
+    renderResultCard(obs);
+  }
+}
+
+const _animTokens = {};
+function animateNumber(id, target, isFloat) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const fmt = (v) => isFloat
+    ? ((v >= 0 ? '+' : '') + v.toFixed(2))
+    : Math.round(v).toString();
+  const start = parseFloat((el.textContent || '0').replace('+','')) || 0;
+  const end = +target;
+  // Set final value immediately as a safety net, then animate from start.
+  // (Cancel any in-flight animation for this id.)
+  const token = (_animTokens[id] || 0) + 1;
+  _animTokens[id] = token;
+  const dur = 360;
+  const t0 = performance.now();
+  function tick(t) {
+    if (_animTokens[id] !== token) return; // superseded
+    const k = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - k, 3);
+    const cur = start + (end - start) * eased;
+    el.textContent = fmt(cur);
+    if (k < 1) requestAnimationFrame(tick);
+    else el.textContent = fmt(end);
+  }
+  // Guarantee the end value lands even if rAF is throttled.
+  setTimeout(() => {
+    if (_animTokens[id] === token) el.textContent = fmt(end);
+  }, dur + 80);
+  requestAnimationFrame(tick);
+}
+
+/* =====================================================================
+   GRAPH (D3 force-directed)
+   ===================================================================== */
+let svg, gLinks, gNodes, gGlow, zoom, gRoot;
+
+function initGraph() {
+  const el = document.getElementById('graph');
+  el.innerHTML = '';
+  svg = d3.select('#graph');
+  const w = el.clientWidth, h = el.clientHeight;
+
+  // defs (filters, markers)
+  const defs = svg.append('defs');
+  defs.append('filter')
+    .attr('id', 'glow')
+    .attr('x', '-50%').attr('y', '-50%')
+    .attr('width', '200%').attr('height', '200%')
+    .html('<feGaussianBlur stdDeviation="3.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>');
+  defs.append('filter')
+    .attr('id', 'glow-gold')
+    .attr('x', '-50%').attr('y', '-50%')
+    .attr('width', '200%').attr('height', '200%')
+    .html('<feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>');
+
+  gRoot = svg.append('g').attr('class', 'root');
+  gLinks = gRoot.append('g').attr('class', 'links');
+  gGlow  = gRoot.append('g').attr('class', 'glows');
+  gNodes = gRoot.append('g').attr('class', 'nodes');
+
+  zoom = d3.zoom().scaleExtent([0.4, 2.5]).on('zoom', (ev) => {
+    gRoot.attr('transform', ev.transform);
+  });
+  svg.call(zoom);
+
+  // Stop any prior simulation so its timer doesn't keep ticking against stale selections.
+  if (state.simulation) state.simulation.stop();
+  state.simulation = d3.forceSimulation([])
+    .force('link', d3.forceLink().id(d => d.id).distance(d => d.trail ? 80 : 70).strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-280))
+    .force('center', d3.forceCenter(w/2, h/2))
+    .force('collide', d3.forceCollide().radius(d => (NODE_RADIUS[d.type] || 12) + 14))
+    .alpha(0) // hold until first sync
+    .on('tick', ticked);
+
+  // resize handling
+  if (!window.__graphResize) {
+    window.__graphResize = true;
+    window.addEventListener('resize', () => {
+      if (!state.simulation) return;
+      const w = document.getElementById('graph').clientWidth;
+      const h = document.getElementById('graph').clientHeight;
+      state.simulation.force('center', d3.forceCenter(w/2, h/2));
+      state.simulation.alpha(0.3).restart();
+    });
+  }
+}
+
+function ticked() {
+  // Use direct selectors so stale cached refs can never silently no-op.
+  d3.select('#graph').selectAll('g.links line.link')
+    .attr('x1', d => (d.source && d.source.x) || 0)
+    .attr('y1', d => (d.source && d.source.y) || 0)
+    .attr('x2', d => (d.target && d.target.x) || 0)
+    .attr('y2', d => (d.target && d.target.y) || 0);
+
+  d3.select('#graph').selectAll('g.glows circle.node-glow')
+    .attr('cx', d => d.x || 0).attr('cy', d => d.y || 0);
+
+  d3.select('#graph').selectAll('g.nodes g.node')
+    .attr('transform', d => `translate(${d.x || 0},${d.y || 0})`);
+}
+
+function updateGraphFromObs(obs) {
+  // build/extend node list
+  const cur = obs.current_node;
+  if (!cur) return;
+
+  // Register all trail nodes + current + neighbors
+  const trailIds = obs.trail.map(n => n.id);
+  state.trail = trailIds;
+
+  // Add trail nodes
+  obs.trail.forEach(n => addOrUpdateNode(n, true));
+  // Add current
+  addOrUpdateNode(cur, true);
+
+  // neighbors of current (limited)
+  const neighbors = (cur.connected_node_ids || []).slice(0, 12);
+  neighbors.forEach(id => {
+    if (!state.knownNodes.has(id)) {
+      const stub = makeStubNode(id);
+      addOrUpdateNode(stub, false);
+    }
+    addEdge(cur.id, id);
+  });
+
+  // trail edges
+  for (let i = 1; i < obs.trail.length; i++) {
+    addEdge(obs.trail[i-1].id, obs.trail[i].id, true);
+  }
+  // ensure edge from last trail node to current if not last
+  if (obs.trail.length && obs.trail[obs.trail.length-1].id !== cur.id) {
+    addEdge(obs.trail[obs.trail.length-1].id, cur.id, true);
+  }
+
+  // Sync d3 nodes/links
+  syncSimulation(obs);
+}
+
+function addOrUpdateNode(n, visited) {
+  const existing = state.knownNodes.get(n.id);
+  if (existing) {
+    if (n.name && !existing.name.startsWith(n.name)) existing.name = n.name;
+    if (n.description) existing.description = n.description;
+    if (visited) existing.visited = true;
+    if (n.type) existing.type = n.type;
+    if (n.connected_node_ids) existing.connected_node_ids = n.connected_node_ids;
+  } else {
+    state.knownNodes.set(n.id, {
+      id: n.id,
+      name: n.name || n.id,
+      type: n.type || inferType(n.id),
+      description: n.description || '',
+      connected_node_ids: n.connected_node_ids || [],
+      visited: !!visited,
+      newlyAdded: true,
+    });
+  }
+}
+
+function makeStubNode(id) {
+  return {
+    id,
+    name: prettyNameFromId(id),
+    type: inferType(id),
+    description: '',
+    connected_node_ids: [],
+  };
+}
+
+function prettyNameFromId(id) {
+  if (id.startsWith('GENE:')) return id.slice(5);
+  if (id.startsWith('VAR:'))  return 'VAR ' + id.slice(4);
+  if (id.startsWith('HP:'))   return id;
+  if (id.startsWith('DIS:'))  return id.slice(4).replace(/_/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
+  if (id.startsWith('PW:'))   return id.slice(3).replace(/_/g,' ');
+  return id;
+}
+function inferType(id) {
+  if (id.startsWith('GENE:')) return 'gene';
+  if (id.startsWith('VAR:'))  return 'variant';
+  if (id.startsWith('HP:'))   return 'phenotype';
+  if (id.startsWith('DIS:'))  return 'disease';
+  if (id.startsWith('PW:'))   return 'pathway';
+  return 'gene';
+}
+
+function addEdge(a, b, trail = false) {
+  if (!a || !b || a === b) return;
+  const key = [a,b].sort().join('||');
+  if (state.edges.has(key)) {
+    // promote to trail
+    if (trail) {
+      const link = state.d3Links.find(l =>
+        (l.source.id===a && l.target.id===b) || (l.source.id===b && l.target.id===a) ||
+        (l.source===a && l.target===b) || (l.source===b && l.target===a));
+      if (link) link.trail = true;
+    }
+    return;
+  }
+  state.edges.add(key);
+  state.d3Links.push({ source: a, target: b, trail });
+}
+
+function syncSimulation(obs) {
+  const cur = obs.current_node;
+  const trailSet = new Set(state.trail);
+
+  // Build d3 nodes from knownNodes; preserve x/y for existing
+  const oldById = new Map(state.d3Nodes.map(n => [n.id, n]));
+  state.d3Nodes = [];
+  state.knownNodes.forEach(n => {
+    const old = oldById.get(n.id);
+    const isCurrent = (n.id === cur.id);
+    const isTrail = trailSet.has(n.id);
+    const isFlagged = obs.flagged_variant && (n.id === obs.flagged_variant.id || n.id === ('VAR:' + obs.flagged_variant.allele_id));
+    // exclusion (gene listed in gene_absent_phenotypes)
+    const exclusionSet = new Set(Object.keys(obs.gene_absent_phenotypes || {}));
+    const geneSym = n.id.startsWith('GENE:') ? n.id.slice(5) : null;
+    const isExcluded = geneSym && exclusionSet.has(geneSym);
+
+    const node = {
+      id: n.id,
+      name: n.name,
+      type: n.type,
+      description: n.description,
+      isCurrent,
+      isTrail,
+      isFlagged,
+      isExcluded,
+      newlyAdded: n.newlyAdded,
+    };
+    if (old) {
+      node.x = old.x; node.y = old.y;
+      node.vx = old.vx; node.vy = old.vy;
+    } else if (isCurrent && obs.trail.length > 0) {
+      // start near previous current
+      const prev = oldById.get(obs.trail[obs.trail.length-2]?.id);
+      const w = document.getElementById('graph').clientWidth;
+      const h = document.getElementById('graph').clientHeight;
+      if (prev) { node.x = prev.x + (Math.random()-0.5)*40; node.y = prev.y + (Math.random()-0.5)*40; }
+      else { node.x = w/2; node.y = h/2; }
+    } else {
+      const w = document.getElementById('graph').clientWidth;
+      const h = document.getElementById('graph').clientHeight;
+      // start near current node
+      const curD3 = oldById.get(cur.id);
+      if (curD3) {
+        const ang = Math.random() * Math.PI * 2;
+        node.x = curD3.x + Math.cos(ang) * 100;
+        node.y = curD3.y + Math.sin(ang) * 100;
+      } else {
+        node.x = w/2 + (Math.random()-0.5)*200;
+        node.y = h/2 + (Math.random()-0.5)*200;
+      }
+    }
+    state.d3Nodes.push(node);
+    n.newlyAdded = false;
+  });
+
+  // Filter out links whose endpoints don't exist
+  const nodeSet = new Set(state.d3Nodes.map(n=>n.id));
+  state.d3Links = state.d3Links.filter(l => {
+    const sId = l.source.id || l.source;
+    const tId = l.target.id || l.target;
+    return nodeSet.has(sId) && nodeSet.has(tId);
+  });
+
+  renderGraph();
+
+  state.simulation.nodes(state.d3Nodes);
+  state.simulation.force('link').links(state.d3Links);
+  state.simulation.alpha(0.9).alphaTarget(0).restart();
+  // Belt-and-suspenders: force at least one tick render in case the timer is slow to wake.
+  ticked();
+  requestAnimationFrame(ticked);
+}
+
+function renderGraph() {
+  // LINKS
+  const links = gLinks.selectAll('line.link').data(state.d3Links,
+    d => (d.source.id || d.source) + '||' + (d.target.id || d.target));
+  links.exit().remove();
+  const linksEnter = links.enter().append('line')
+    .attr('class', 'link')
+    .style('animation', 'link-fade 380ms ease-out both');
+  links.merge(linksEnter)
+    .attr('class', d => 'link' + (d.trail ? ' trail' : ''))
+    .attr('opacity', d => {
+      const sTrail = state.trail.includes(d.source.id || d.source);
+      const tTrail = state.trail.includes(d.target.id || d.target);
+      if (d.trail) return 1;
+      if (sTrail || tTrail) return 0.6;
+      return 0.35;
+    });
+
+  // GLOWS (current node + flagged)
+  const glowData = state.d3Nodes.filter(n => n.isCurrent || n.isFlagged);
+  const glows = gGlow.selectAll('circle.node-glow').data(glowData, d => d.id);
+  glows.exit().remove();
+  const glowsEnter = glows.enter().append('circle')
+    .attr('class', 'node-glow')
+    .attr('r', 22)
+    .attr('fill', 'none');
+  glows.merge(glowsEnter)
+    .attr('stroke', d => d.isFlagged ? '#fbbf24' : NODE_COLOR[d.type])
+    .attr('stroke-width', d => d.isFlagged ? 3 : 2.5)
+    .attr('filter', d => d.isFlagged ? 'url(#glow-gold)' : 'url(#glow)')
+    .style('animation', d => d.isFlagged ? 'flag-glow 1.6s ease-in-out infinite' : 'pulse-glow 2s ease-in-out infinite');
+
+  // NODES
+  const nodes = gNodes.selectAll('g.node').data(state.d3Nodes, d => d.id);
+  nodes.exit().transition().duration(200)
+    .style('opacity', 0).remove();
+
+  const nodesEnter = nodes.enter().append('g')
+    .attr('class', 'node')
+    .style('opacity', 0)
+    .on('mouseenter', (ev, d) => showTooltip(ev, d))
+    .on('mousemove', (ev, d) => moveTooltip(ev))
+    .on('mouseleave', () => hideTooltip())
+    .call(d3.drag()
+      .on('start', (ev, d) => {
+        if (!ev.active) state.simulation.alphaTarget(0.3).restart();
+        d.fx = d.x; d.fy = d.y;
+      })
+      .on('drag', (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
+      .on('end', (ev, d) => {
+        if (!ev.active) state.simulation.alphaTarget(0);
+        d.fx = null; d.fy = null;
+      }));
+
+  // exclusion ring
+  nodesEnter.append('circle').attr('class', 'excl-ring')
+    .attr('fill', 'none')
+    .attr('stroke', '#f87171')
+    .attr('stroke-width', 1.5)
+    .attr('stroke-dasharray', '3 2')
+    .attr('opacity', 0);
+
+  // main circle
+  nodesEnter.append('circle').attr('class', 'main')
+    .attr('r', d => radiusFor(d))
+    .attr('fill', d => NODE_COLOR[d.type] || '#888')
+    .attr('stroke', '#0a0f1e')
+    .attr('stroke-width', 2)
+    .style('transform-origin', 'center')
+    .style('transform-box', 'fill-box')
+    .style('animation', 'node-pop 320ms cubic-bezier(.2,.7,.2,1)');
+
+  // flagged badge
+  nodesEnter.append('g').attr('class', 'flag-badge').style('display', 'none')
+    .html('<circle r="6" cx="10" cy="-10" fill="#fbbf24" stroke="#0a0f1e" stroke-width="1.5"/><path d="M7.5 -10 L9.5 -8 L12.5 -12" stroke="#0a0f1e" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>');
+
+  // label
+  nodesEnter.append('text').attr('class', 'node-label')
+    .attr('dy', d => (NODE_RADIUS[d.type] || 12) + 14)
+    .text(d => labelFor(d));
+
+  nodesEnter.style('opacity', d => (d.isTrail || d.isCurrent) ? 1 : 0.55);
+
+  // updates for all nodes
+  const all = nodes.merge(nodesEnter);
+  all.select('circle.main')
+    .attr('r', d => radiusFor(d))
+    .attr('fill', d => NODE_COLOR[d.type] || '#888')
+    .attr('stroke', d => d.isFlagged ? '#fbbf24' : '#0a0f1e')
+    .attr('stroke-width', d => d.isFlagged ? 2.5 : 2);
+  all.style('opacity', d => (d.isTrail || d.isCurrent) ? 1 : 0.5);
+  all.select('circle.excl-ring')
+    .attr('r', d => radiusFor(d) + 4)
+    .transition().duration(250)
+    .attr('opacity', d => d.isExcluded ? 1 : 0);
+  all.select('g.flag-badge')
+    .style('display', d => d.isFlagged ? 'block' : 'none');
+  all.select('text.node-label')
+    .text(d => labelFor(d))
+    .attr('dy', d => radiusFor(d) + 14);
+}
+
+function radiusFor(d) {
+  let r = NODE_RADIUS[d.type] || 11;
+  if (d.isCurrent) r += 4;
+  if (d.isFlagged) r += 3;
+  if (!d.isTrail && !d.isCurrent) r -= 2;
+  return r;
+}
+function labelFor(d) {
+  const max = 18;
+  if (!d.isTrail && !d.isCurrent) return ''; // hide labels on stub neighbors
+  return d.name.length > max ? d.name.slice(0, max-1) + '…' : d.name;
+}
+
+/* =====================================================================
+   TOOLTIP
+   ===================================================================== */
+const tooltipEl = document.getElementById('tooltip');
+function showTooltip(ev, d) {
+  tooltipEl.style.display = 'block';
+  const color = NODE_COLOR[d.type] || '#888';
+  tooltipEl.innerHTML = `
+    <div class="ttype" style="color:${color}">${d.type}</div>
+    <div class="tname">${escapeHtml(d.name)}</div>
+    ${d.description ? `<div class="tdesc">${escapeHtml(d.description.slice(0, 140))}${d.description.length>140?'…':''}</div>` : ''}
+    <div class="tid">${escapeHtml(d.id)}</div>
+  `;
+  moveTooltip(ev);
+}
+function moveTooltip(ev) {
+  tooltipEl.style.left = (ev.clientX + 14) + 'px';
+  tooltipEl.style.top  = (ev.clientY + 14) + 'px';
+}
+function hideTooltip() { tooltipEl.style.display = 'none'; }
+
+/* =====================================================================
+   BREADCRUMB / LOG / RIGHT PANEL
+   ===================================================================== */
+function renderBreadcrumb(obs) {
+  const el = document.getElementById('breadcrumb');
+  const trail = obs.trail || [];
+  const cur = obs.current_node;
+  const items = [...trail];
+  if (cur && (!trail.length || trail[trail.length-1].id !== cur.id)) items.push(cur);
+  if (!items.length) { el.innerHTML = '<span class="empty-breadcrumb">Awaiting…</span>'; return; }
+  el.innerHTML = items.map((n, i) => {
+    const isLast = (i === items.length - 1);
+    const color = NODE_COLOR[n.type] || '#888';
+    return `<span class="crumb${isLast ? ' current' : ''}">
+      <span class="crumb-dot" style="background:${color}"></span>${escapeHtml(n.name || n.id)}
+    </span>${isLast ? '' : '<span class="sep">›</span>'}`;
+  }).join('');
+}
+
+function pushLog(obs) {
+  if (!obs.action_taken) return;
+  const log = document.getElementById('agent-log');
+  // fade previous
+  log.querySelectorAll('.log-card').forEach(c => c.classList.add('fade'));
+  const card = document.createElement('div');
+  card.className = 'log-card action-' + obs.action_taken;
+  card.innerHTML = `
+    <div class="log-action">▸ ${obs.action_taken.replace('_',' ')} · step ${obs.step}</div>
+    <div>${escapeHtml(obs.action_reasoning || '')}</div>
+  `;
+  log.prepend(card);
+  // keep at most 4 visible
+  while (log.children.length > 4) log.removeChild(log.lastChild);
+}
+
+function renderRightPanel() {
+  const obs = state.current;
+  // Patient phenotypes
+  const tagWrap = document.getElementById('pheno-tags');
+  const names = obs?.phenotype_names || [];
+  const ids   = obs?.patient_phenotypes || [];
+  if (!names.length) {
+    tagWrap.innerHTML = '<div class="empty-mini" style="width:100%">No phenotypes loaded</div>';
+  } else {
+    tagWrap.innerHTML = names.map((n, i) => `
+      <span class="pheno-tag">${escapeHtml(n)}<span class="tag-id">${escapeHtml(ids[i] || '')}</span></span>
+    `).join('');
+  }
+  document.getElementById('pheno-count').textContent = names.length;
+
+  // Exclusions
+  const exclWrap = document.getElementById('exclusions');
+  const excl = obs?.gene_absent_phenotypes || {};
+  const keys = Object.keys(excl);
+  if (!keys.length) {
+    exclWrap.innerHTML = '<div class="empty-mini">No genes ruled out yet</div>';
+  } else {
+    exclWrap.innerHTML = keys.map(g => `
+      <div class="exclusion-card">
+        <div class="gene-name">${escapeHtml(g)}</div>
+        <div class="lacks">patient lacks: <strong>${excl[g].map(escapeHtml).join(', ')}</strong></div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('excl-count').textContent = keys.length;
+
+  // Candidates
+  renderCandidates();
+}
+
+function renderCandidates() {
+  const wrap = document.getElementById('candidates');
+  const obs = state.current;
+  const cands = obs?.candidate_variants || [];
+  document.getElementById('cand-count').textContent = cands.length;
+  if (!cands.length) {
+    wrap.innerHTML = '<div class="empty-mini">Candidates appear as the agent explores</div>';
+    return;
+  }
+  const flaggedId = obs?.flagged_variant?.id || (obs?.flagged_variant ? ('VAR:' + obs.flagged_variant.allele_id) : null);
+  const sorted = [...cands].sort((a, b) => {
+    const av = a[state.sortKey], bv = b[state.sortKey];
+    if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * state.sortDir;
+    return String(av).localeCompare(String(bv)) * state.sortDir;
+  });
+  const sortIndicator = (key) =>
+    state.sortKey === key ? (state.sortDir === 1 ? '↑' : '↓') : '';
+  wrap.innerHTML = `
+    <table class="variants">
+      <thead>
+        <tr>
+          <th data-sort="gene">Gene <span class="sort">${sortIndicator('gene')}</span></th>
+          <th data-sort="variant_type">Type <span class="sort">${sortIndicator('variant_type')}</span></th>
+          <th data-sort="pathogenicity_score">Score <span class="sort">${sortIndicator('pathogenicity_score')}</span></th>
+          <th data-sort="clinical_significance">Sig <span class="sort">${sortIndicator('clinical_significance')}</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map(v => {
+          const score = +v.pathogenicity_score || 0;
+          const sigClass = sigClassFor(v.clinical_significance);
+          const isFlagged = flaggedId && (v.id === flaggedId);
+          const color = score > 0.85 ? '#fbbf24' : score > 0.6 ? '#fb923c' : score > 0.3 ? '#60a5fa' : '#6b7280';
+          return `<tr class="${isFlagged ? 'flagged' : ''}">
+            <td class="gene-cell">${escapeHtml(v.gene || '?')}</td>
+            <td class="vtype">${escapeHtml(shortType(v.variant_type))}</td>
+            <td class="score-cell">
+              <div class="score-num">${score.toFixed(2)}</div>
+              <div class="score-bar"><span style="width:${score*100}%;background:${color}"></span></div>
+            </td>
+            <td><span class="sig ${sigClass}">${shortSig(v.clinical_significance)}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+  wrap.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const k = th.dataset.sort;
+      if (state.sortKey === k) state.sortDir *= -1;
+      else { state.sortKey = k; state.sortDir = -1; }
+      renderCandidates();
+    });
+  });
+}
+
+function sigClassFor(s) {
+  if (!s) return 'vus';
+  const x = s.toLowerCase();
+  if (x.includes('pathogenic') && !x.includes('likely')) return 'path';
+  if (x.includes('likely pathogenic')) return 'likely';
+  if (x.includes('benign')) return 'benign';
+  return 'vus';
+}
+function shortSig(s) {
+  if (!s) return 'VUS';
+  const x = s.toLowerCase();
+  if (x === 'pathogenic') return 'Pathogenic';
+  if (x.includes('likely pathogenic')) return 'Likely Path.';
+  if (x.includes('benign')) return 'Benign';
+  if (x.includes('uncertain')) return 'VUS';
+  return s.length > 14 ? s.slice(0,12)+'…' : s;
+}
+function shortType(t) {
+  if (!t) return '—';
+  if (t === 'single nucleotide variant') return 'SNV';
+  if (t === 'deletion') return 'Del';
+  if (t === 'duplication') return 'Dup';
+  if (t === 'insertion') return 'Ins';
+  if (t === 'copy number variant') return 'CNV';
+  return t.length > 12 ? t.slice(0,10)+'…' : t;
+}
+
+function renderResultCard(obs) {
+  const slot = document.getElementById('result-slot');
+  const success = obs.success === true;
+  const timeout = obs.success === false && (obs.step >= (obs.max_steps || 15));
+  const cls = success ? 'success' : timeout ? 'timeout' : 'fail';
+  const label = success ? 'Causal Variant Flagged' : timeout ? 'Episode Timeout' : 'Incorrect Flag';
+  const icon = success
+    ? '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5V8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11" r="0.8" fill="currentColor"/></svg>';
+
+  const fv = obs.flagged_variant;
+  const disease = fv?.disease_associations?.[0] || (obs.trail.find(n => n.type === 'disease')?.name) || '—';
+
+  slot.innerHTML = `
+    <div class="result-card ${cls}">
+      <div class="result-head">${icon} ${label}</div>
+      ${fv ? `
+        <div class="result-row"><span class="k">Variant</span><span class="v">${escapeHtml(fv.name || fv.id)}</span></div>
+        <div class="result-row"><span class="k">Gene</span><span class="v">${escapeHtml(fv.gene || '—')}</span></div>
+        <div class="result-row"><span class="k">Disease</span><span class="v">${escapeHtml(disease)}</span></div>
+        <div class="result-row"><span class="k">Path. Score</span><span class="v">${(fv.pathogenicity_score||0).toFixed(2)}</span></div>
+      ` : ''}
+      <div class="result-row"><span class="k">Final Reward</span><span class="v">${(obs.cumulative_reward||0).toFixed(3)}</span></div>
+      <div class="result-row"><span class="k">Steps Used</span><span class="v">${obs.step} / ${obs.max_steps || 15}</span></div>
+      ${obs.action_reasoning ? `<div class="result-reason">${escapeHtml(obs.action_reasoning)}</div>` : ''}
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+/* =====================================================================
+   DEMO MODE — synthesizes a plausible episode when backend is offline
+   ===================================================================== */
+function runDemo(phenoStrings) {
+  state.episodeId = 'demo-' + Date.now();
+  const steps = buildDemoEpisode(phenoStrings);
+  let i = 0;
+  function next() {
+    if (i >= steps.length) { finishRun(); return; }
+    ingestStep(steps[i]);
+    if (steps[i].done) { finishRun(); return; }
+    i++;
+    state.demoTimer = setTimeout(next, 1300 + Math.random()*500);
+  }
+  next();
+}
+
+function buildDemoEpisode(phenoStrings) {
+  const phenoNames = (phenoStrings && phenoStrings.length)
+    ? phenoStrings.map(p => p.replace(/\b\w/g, c => c.toUpperCase()))
+    : ['Seizures', 'Hypotonia', 'Global developmental delay'];
+  const phenoIds = phenoNames.map((_, i) => 'HP:' + (1000 + i * 13).toString().padStart(7,'0'));
+
+  // Build nodes with rich neighbor sets
+  const N = (id, type, name, desc, conns) => ({
+    id, type, name, description: desc, connected_node_ids: conns || []
+  });
+
+  const HPseiz = N(phenoIds[0]||'HP:0001250', 'phenotype', phenoNames[0]||'Seizures',
+    'Sudden episodes of involuntary muscle activity.',
+    ['DIS:dravet_syndrome','DIS:tay_sachs','DIS:epileptic_encephalopathy','GENE:SCN1A']);
+  const HPhypo = N(phenoIds[1]||'HP:0001252', 'phenotype', phenoNames[1]||'Hypotonia',
+    'Decreased muscle tone.',
+    ['DIS:dravet_syndrome','DIS:angelman','GENE:UBE3A','HP:0001263']);
+  const HPgdd  = N(phenoIds[2]||'HP:0001263', 'phenotype', phenoNames[2]||'Global developmental delay',
+    'Delay in multiple developmental domains.',
+    ['DIS:dravet_syndrome','DIS:rett','GENE:MECP2']);
+
+  const DISdrav = N('DIS:dravet_syndrome','disease','Dravet Syndrome',
+    'Severe myoclonic epilepsy of infancy, frequently caused by SCN1A loss-of-function.',
+    ['GENE:SCN1A','HP:0001250','HP:0001252','HP:0001263','PW:sodium_channel']);
+  const DISangel = N('DIS:angelman','disease','Angelman Syndrome',
+    'Neurogenetic disorder with intellectual disability.',
+    ['GENE:UBE3A','HP:0001252']);
+
+  const GSCN1A = N('GENE:SCN1A','gene','SCN1A',
+    'Voltage-gated sodium channel α-subunit. Loss-of-function causes Dravet syndrome.',
+    ['VAR:18977','VAR:21044','DIS:dravet_syndrome','HP:0001250','PW:sodium_channel']);
+  const GUBE3A = N('GENE:UBE3A','gene','UBE3A',
+    'E3 ubiquitin-protein ligase implicated in Angelman syndrome.',
+    ['VAR:33102','DIS:angelman','HP:0001252']);
+  const GBRCA1 = N('GENE:BRCA1','gene','BRCA1',
+    'Tumor suppressor — DNA double-strand break repair.',
+    ['VAR:55501','DIS:hereditary_breast_ovarian']);
+  const GHEXA  = N('GENE:HEXA','gene','HEXA',
+    'β-hexosaminidase A α-subunit; deficiency causes Tay-Sachs disease.',
+    ['VAR:18977','DIS:tay_sachs']);
+
+  const V_SCN1A_LOF = N('VAR:21044','variant','NM_001165963.4:c.4633C>T',
+    'Nonsense variant in SCN1A, predicted loss of function. ClinVar: Pathogenic.',
+    ['GENE:SCN1A','DIS:dravet_syndrome']);
+  const V_HEXA_DUP  = N('VAR:18977','variant','NM_000520.6:c.1274_1277dup',
+    'Frameshift duplication in HEXA. ClinVar: Pathogenic for Tay-Sachs.',
+    ['GENE:HEXA','DIS:tay_sachs']);
+
+  // Candidate variant list grows over time
+  const candPool = [
+    { id:'VAR:21044', allele_id:'21044', gene:'SCN1A', name:'NM_001165963.4:c.4633C>T',
+      variant_type:'single nucleotide variant', clinical_significance:'Pathogenic',
+      pathogenicity_score:0.97, disease_associations:['Dravet syndrome'] },
+    { id:'VAR:18977', allele_id:'18977', gene:'HEXA', name:'NM_000520.6:c.1274_1277dup',
+      variant_type:'duplication', clinical_significance:'Pathogenic',
+      pathogenicity_score:0.92, disease_associations:['Tay-Sachs disease'] },
+    { id:'VAR:33102', allele_id:'33102', gene:'UBE3A', name:'NM_130838.4:c.2304delA',
+      variant_type:'deletion', clinical_significance:'Likely pathogenic',
+      pathogenicity_score:0.78, disease_associations:['Angelman syndrome'] },
+    { id:'VAR:55501', allele_id:'55501', gene:'BRCA1', name:'NM_007294.4:c.5266dup',
+      variant_type:'duplication', clinical_significance:'Pathogenic',
+      pathogenicity_score:0.88, disease_associations:['Hereditary breast/ovarian cancer'] },
+    { id:'VAR:71200', allele_id:'71200', gene:'MECP2', name:'NM_004992.4:c.502C>T',
+      variant_type:'single nucleotide variant', clinical_significance:'Uncertain significance',
+      pathogenicity_score:0.41, disease_associations:['Rett syndrome'] },
+  ];
+
+  const exclusionsAtStep = {
+    3: { BRCA1: ['Breast carcinoma','Ovarian neoplasm','Pancreatic adenocarcinoma'] },
+    5: { BRCA1: ['Breast carcinoma','Ovarian neoplasm','Pancreatic adenocarcinoma'],
+         HEXA:  ['Hearing impairment','Cherry-red macula'] },
+    7: { BRCA1: ['Breast carcinoma','Ovarian neoplasm','Pancreatic adenocarcinoma'],
+         HEXA:  ['Hearing impairment','Cherry-red macula'] },
+  };
+
+  // Episode timeline
+  const steps = [];
+  const base = {
+    max_steps: 15,
+    task_type: state.task,
+    patient_phenotypes: phenoIds,
+    phenotype_names: phenoNames,
+    flagged_variant: null,
+    success: null,
+    done: false,
+  };
+
+  steps.push({
+    ...base,
+    step: 1, action_taken: 'hop',
+    action_reasoning: `Entering graph at phenotype "${phenoNames[0]}". Three connected diseases — Dravet, Tay-Sachs, epileptic encephalopathy — all plausible. Starting from the most specific phenotype.`,
+    reward: 0.02, cumulative_reward: 0.02,
+    current_node: HPseiz,
+    trail: [HPseiz],
+    candidate_variants: [],
+    gene_absent_phenotypes: {},
+  });
+  steps.push({
+    ...base,
+    step: 2, action_taken: 'hop',
+    action_reasoning: 'Crossing to disease layer. Dravet syndrome shares all three patient phenotypes — strongest match.',
+    reward: 0.08, cumulative_reward: 0.10,
+    current_node: DISdrav,
+    trail: [HPseiz, DISdrav],
+    candidate_variants: candPool.slice(0,2),
+    gene_absent_phenotypes: {},
+  });
+  steps.push({
+    ...base,
+    step: 3, action_taken: 'hop',
+    action_reasoning: 'Side-checking BRCA1 — clinical significance is high but its phenotype profile (breast, ovarian, pancreatic) is absent in this patient. Marking as exclusion.',
+    reward: -0.02, cumulative_reward: 0.08,
+    current_node: GBRCA1,
+    trail: [HPseiz, DISdrav, GBRCA1],
+    candidate_variants: candPool.slice(0,4),
+    gene_absent_phenotypes: exclusionsAtStep[3],
+  });
+  steps.push({
+    ...base,
+    step: 4, action_taken: 'backtrack',
+    action_reasoning: 'BRCA1 ruled out — its associated phenotypes are absent. Returning to Dravet syndrome to continue the high-evidence branch.',
+    reward: 0.01, cumulative_reward: 0.09,
+    current_node: DISdrav,
+    trail: [HPseiz, DISdrav],
+    candidate_variants: candPool.slice(0,4),
+    gene_absent_phenotypes: exclusionsAtStep[3],
+  });
+  steps.push({
+    ...base,
+    step: 5, action_taken: 'hop',
+    action_reasoning: 'Visiting HEXA briefly — Tay-Sachs is on the differential but patient lacks cherry-red macula and hearing impairment. Exclusion signal recorded.',
+    reward: -0.01, cumulative_reward: 0.08,
+    current_node: GHEXA,
+    trail: [HPseiz, DISdrav, GHEXA],
+    candidate_variants: candPool.slice(0,4),
+    gene_absent_phenotypes: exclusionsAtStep[5],
+  });
+  steps.push({
+    ...base,
+    step: 6, action_taken: 'backtrack',
+    action_reasoning: 'HEXA phenotype profile inconsistent with patient. Backtracking to Dravet.',
+    reward: 0.01, cumulative_reward: 0.09,
+    current_node: DISdrav,
+    trail: [HPseiz, DISdrav],
+    candidate_variants: candPool.slice(0,4),
+    gene_absent_phenotypes: exclusionsAtStep[5],
+  });
+  steps.push({
+    ...base,
+    step: 7, action_taken: 'hop',
+    action_reasoning: 'SCN1A is the canonical Dravet gene. Phenotype overlap = 3/3. Confidence climbing.',
+    reward: 0.12, cumulative_reward: 0.21,
+    current_node: GSCN1A,
+    trail: [HPseiz, DISdrav, GSCN1A],
+    candidate_variants: candPool,
+    gene_absent_phenotypes: exclusionsAtStep[7],
+  });
+  steps.push({
+    ...base,
+    step: 8, action_taken: 'hop',
+    action_reasoning: 'Examining variant NM_001165963.4:c.4633C>T — nonsense mutation in SCN1A. Pathogenicity score 0.97. Strong ClinVar evidence.',
+    reward: 0.18, cumulative_reward: 0.39,
+    current_node: V_SCN1A_LOF,
+    trail: [HPseiz, DISdrav, GSCN1A, V_SCN1A_LOF],
+    candidate_variants: candPool,
+    gene_absent_phenotypes: exclusionsAtStep[7],
+  });
+  steps.push({
+    ...base,
+    step: 9, action_taken: 'summarise_trail',
+    action_reasoning: 'Trail summary: Seizures → Dravet → SCN1A → c.4633C>T. All three patient phenotypes match Dravet. No conflicting evidence. Preparing to flag.',
+    reward: 0.05, cumulative_reward: 0.44,
+    current_node: V_SCN1A_LOF,
+    trail: [HPseiz, DISdrav, GSCN1A, V_SCN1A_LOF],
+    candidate_variants: candPool,
+    gene_absent_phenotypes: exclusionsAtStep[7],
+  });
+  steps.push({
+    ...base,
+    step: 10, action_taken: 'flag_causal',
+    action_reasoning: 'Flagging SCN1A NM_001165963.4:c.4633C>T as causal variant for Dravet syndrome. Three-of-three phenotype concordance, pathogenicity 0.97, no exclusion conflicts.',
+    reward: 1.00, cumulative_reward: 1.44,
+    current_node: V_SCN1A_LOF,
+    trail: [HPseiz, DISdrav, GSCN1A, V_SCN1A_LOF],
+    candidate_variants: candPool,
+    gene_absent_phenotypes: exclusionsAtStep[7],
+    flagged_variant: candPool[0],
+    success: true,
+    done: true,
+  });
+
+  return steps;
+}
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+initGraph();
+checkHealth();
+// recheck periodically
+setInterval(checkHealth, 8000);
+
+// derive a fake local ip for the codeblock
+(function(){
+  const ip = '192.168.' + (1 + Math.floor(Math.random()*5)) + '.' + (10 + Math.floor(Math.random()*40));
+  const el = document.getElementById('local-ip');
+  if (el) el.textContent = ip;
+})();
+</script>
+
+</body>
+</html>

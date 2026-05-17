@@ -19,12 +19,14 @@ import json
 import socket
 import threading
 import uuid
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import ollama
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from src.agent.intake import match_to_hpo
@@ -90,6 +92,14 @@ class IntakeResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
+
+_HTML = Path(__file__).parent.parent.parent / "GenoPath.html"
+
+
+@app.get("/")
+async def frontend():
+    return FileResponse(_HTML, media_type="text/html")
+
 
 @app.get("/health")
 async def health() -> Dict[str, Any]:
@@ -213,7 +223,12 @@ async def episode_stream(episode_id: str):
             obs_dict["action_reasoning"] = action.reasoning
             obs_dict["reward"] = result.reward
             obs_dict["done"] = result.done
-            obs_dict["flagged_variant"] = env._flagged_allele_ids[-1] if env._flagged_allele_ids else None
+            if env._flagged_allele_ids:
+                aid = env._flagged_allele_ids[-1]
+                fv = next((v for v in env._case.candidate_variants if v.allele_id == aid), None)
+                obs_dict["flagged_variant"] = fv.model_dump() if fv else {"id": f"VAR:{aid}", "allele_id": aid}
+            else:
+                obs_dict["flagged_variant"] = None
             obs_dict["success"] = (result.reward > 0.5) if result.done else None
 
             yield f"data: {json.dumps(obs_dict)}\n\n"

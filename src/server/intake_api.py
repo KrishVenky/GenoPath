@@ -24,12 +24,14 @@ from typing import Any, Dict, List, Optional
 
 import ollama
 
+import base64
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from pydantic import BaseModel
 
-from src.agent.intake import match_to_hpo
+from src.agent.intake import extract_phenotypes_from_image, match_to_hpo
 from src.agent.tools import GENOPATH_TOOLS, SYSTEM_PROMPT, format_observation
 from src.episode.environment import GenoPathEnvironment
 from src.episode.models import GenoPathAction
@@ -99,6 +101,169 @@ _HTML = Path(__file__).parent.parent.parent / "GenoPath.html"
 @app.get("/")
 async def frontend():
     return FileResponse(_HTML, media_type="text/html")
+
+
+class ImagePayload(BaseModel):
+    image_b64: str  # base64-encoded image data (no data-URI prefix)
+    mime: str = "image/jpeg"
+
+
+@app.post("/extract-phenotypes")
+async def extract_phenotypes(payload: ImagePayload) -> Dict[str, Any]:
+    """
+    Receive a base64-encoded image from any phone browser.
+    Gemma 4 E4B vision extracts phenotype terms; HPO matcher resolves them.
+    Returns matched phenotypes ready to pass straight to /intake.
+    """
+    import tempfile, os
+    img_bytes = base64.b64decode(payload.image_b64)
+    suffix = ".jpg" if "jpeg" in payload.mime else ".png"
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as f:
+        f.write(img_bytes)
+        tmp = f.name
+    try:
+        matched = extract_phenotypes_from_image(tmp)
+    finally:
+        os.unlink(tmp)
+    return {"matched": matched}
+
+
+_CAMERA_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GenoPath — Capture Report</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0f1e;color:#e2e8f0;font-family:system-ui,sans-serif;
+       min-height:100dvh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+  h1{font-size:1.2rem;font-weight:600;margin-bottom:4px;color:#a5b4fc}
+  .sub{font-size:.85rem;color:#64748b;margin-bottom:28px;text-align:center}
+  .card{background:#111827;border:1px solid #1e293b;border-radius:14px;
+        padding:20px;width:100%;max-width:420px;margin-bottom:16px}
+  label.capture-btn{display:block;background:#4f46e5;color:#fff;text-align:center;
+        padding:14px;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;
+        transition:background .2s}
+  label.capture-btn:active{background:#4338ca}
+  input[type=file]{display:none}
+  #preview{width:100%;border-radius:8px;margin-top:14px;display:none}
+  #status{font-size:.85rem;color:#94a3b8;margin-top:10px;min-height:20px;text-align:center}
+  .tag-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .tag{background:#1e1b4b;border:1px solid #4f46e5;color:#a5b4fc;
+       padding:4px 10px;border-radius:20px;font-size:.8rem}
+  .tag.no-match{border-color:#475569;color:#94a3b8;background:#1e293b}
+  .confirm-btn{width:100%;background:#059669;color:#fff;border:none;border-radius:10px;
+        padding:14px;font-size:1rem;font-weight:600;cursor:pointer;display:none;
+        margin-top:6px;transition:background .2s}
+  .confirm-btn:active{background:#047857}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid #4f46e5;
+           border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;
+           vertical-align:middle;margin-right:6px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .back{font-size:.8rem;color:#64748b;text-decoration:none;margin-top:auto;padding-top:24px}
+  .back:hover{color:#a5b4fc}
+</style>
+</head>
+<body>
+<h1>GenoPath</h1>
+<p class="sub">Photograph a clinical report — Gemma extracts the phenotypes.</p>
+
+<div class="card">
+  <label class="capture-btn" for="cam">
+    📷 &nbsp;Capture Clinical Report
+  </label>
+  <input type="file" id="cam" accept="image/*" capture="environment">
+  <img id="preview" alt="captured report">
+  <div id="status"></div>
+</div>
+
+<div class="card" id="result-card" style="display:none">
+  <div style="font-size:.8rem;color:#64748b;margin-bottom:8px">EXTRACTED PHENOTYPES</div>
+  <div class="tag-wrap" id="tags"></div>
+  <button class="confirm-btn" id="confirm-btn" onclick="confirm()">
+    Run GenoPath Analysis →
+  </button>
+</div>
+
+<a href="/" class="back">← Back to main UI</a>
+
+<script>
+let matched = [];
+
+document.getElementById('cam').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Show preview
+  const url = URL.createObjectURL(file);
+  const prev = document.getElementById('preview');
+  prev.src = url;
+  prev.style.display = 'block';
+
+  document.getElementById('result-card').style.display = 'none';
+  document.getElementById('status').innerHTML =
+    '<span class="spinner"></span>Gemma is reading the report…';
+
+  // Base64 encode
+  const b64 = await new Promise(res => {
+    const reader = new FileReader();
+    reader.onload = () => res(reader.result.split(',')[1]);
+    reader.readAsDataURL(file);
+  });
+
+  try {
+    const r = await fetch('/extract-phenotypes', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({image_b64: b64, mime: file.type}),
+    });
+    if (!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+    matched = data.matched || [];
+
+    document.getElementById('status').textContent =
+      matched.length + ' phenotype' + (matched.length !== 1 ? 's' : '') + ' found';
+
+    const tagWrap = document.getElementById('tags');
+    tagWrap.innerHTML = matched.map(m =>
+      `<span class="tag${m.hpo_id ? '' : ' no-match'}">${m.name}</span>`
+    ).join('');
+
+    document.getElementById('confirm-btn').style.display = 'block';
+    document.getElementById('result-card').style.display = 'block';
+  } catch(err) {
+    document.getElementById('status').textContent = 'Error: ' + err.message;
+  }
+});
+
+async function confirm() {
+  const btn = document.getElementById('confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Starting episode…';
+
+  const r = await fetch('/intake', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      raw_phenotypes: matched.map(m => m.raw),
+      source: 'camera',
+      task_type: 'monogenic',
+    }),
+  });
+  const data = await r.json();
+  // Hand off to main UI with episode_id so it can connect to the stream
+  window.location.href = '/?episode_id=' + encodeURIComponent(data.episode_id);
+}
+</script>
+</body>
+</html>
+"""
+
+
+@app.get("/camera")
+async def camera_page():
+    return HTMLResponse(_CAMERA_HTML)
 
 
 @app.get("/health")

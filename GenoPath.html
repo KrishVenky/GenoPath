@@ -1937,8 +1937,21 @@ function buildDemoEpisode(phenoStrings) {
    ===================================================================== */
 initGraph();
 checkHealth();
-// recheck periodically
 setInterval(checkHealth, 8000);
+
+// If redirected from /camera with an active episode, auto-connect to its stream
+(function() {
+  const ep = new URLSearchParams(window.location.search).get('episode_id');
+  if (!ep) return;
+  state.episodeId = ep;
+  state.mode = 'live';
+  state.running = true;
+  document.getElementById('empty-state').style.display = 'none';
+  const btn = document.getElementById('run-btn');
+  btn.querySelector('.cta-label').textContent = 'Running…';
+  btn.disabled = true;
+  openSSE();
+})();
 
 // derive a fake local ip for the codeblock
 (function(){

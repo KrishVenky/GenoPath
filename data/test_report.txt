@@ -1,0 +1,38 @@
+PEDIATRIC NEUROLOGY CLINIC — CLINICAL SUMMARY
+Patient: [REDACTED]   DOB: [REDACTED]   MRN: [REDACTED]
+Date of Visit: 2026-05-17   Physician: [REDACTED]
+
+CHIEF COMPLAINT
+Recurrent seizures and developmental regression since age 6 months.
+
+HISTORY OF PRESENT ILLNESS
+This 14-month-old male presents with breakthrough seizures beginning at 6 months
+of age, initially triggered by fever but subsequently occurring without febrile
+illness. Parents report up to 8 seizure events per day, including myoclonic jerks
+and prolonged absence episodes unresponsive to current anticonvulsant therapy.
+
+Neurodevelopmental review reveals global developmental delay: the patient is not
+yet sitting independently, has no purposeful hand use, and has lost previously
+acquired social smiling (developmental regression). Hypotonia is noted by the
+primary care physician and confirmed on examination.
+
+EXAMINATION FINDINGS
+- Generalized hypotonia with decreased deep tendon reflexes
+- Global developmental delay (gross motor, fine motor, language)
+- Developmental regression: loss of social milestones noted since 10 months
+- Seizures: myoclonic and tonic-clonic types observed in clinic
+- Autistic behavior: limited eye contact, no joint attention
+- Respiratory: occasional irregular breathing noted during post-ictal period
+
+INVESTIGATIONS
+EEG: Diffuse background slowing with multifocal epileptiform discharges
+MRI Brain: Mild cerebral atrophy, no structural lesion
+Metabolic panel: Normal
+Chromosomal microarray: Pending
+
+IMPRESSION
+Genetic epileptic encephalopathy, etiology under investigation.
+Referral for whole-exome sequencing placed.
+
+PLAN
+Continue levetiracetam. Add clobazam. Genetic counseling referral.

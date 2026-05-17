@@ -23,8 +23,14 @@ data/variant_summary.txt
 data/*.gz
 data/*.zip
 
+# Build artefacts / upload packages
+genopath_upload.zip
+*.zip
+
 # Generated results (reproducible via scripts)
 results/*.json
+!results/baseline_e4b.json
+!results/cognitive_load.json
 
 # IDE
 .vscode/settings.json

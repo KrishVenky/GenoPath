@@ -1,0 +1,239 @@
+{
+  "summary": {
+    "monogenic": {
+      "n": 10,
+      "avg_candidates": 6.3,
+      "avg_high_path_candidates": 6.2,
+      "avg_bfs_hops": 3.0,
+      "burden_ratio": 2.07
+    },
+    "oligogenic": {
+      "n": 10,
+      "avg_candidates": 9.5,
+      "avg_high_path_candidates": 9.5,
+      "avg_bfs_hops": 3.0,
+      "burden_ratio": 3.17
+    },
+    "phenotype_mismatch": {
+      "n": 10,
+      "avg_candidates": 8.3,
+      "avg_high_path_candidates": 8.2,
+      "avg_bfs_hops": 3.0,
+      "burden_ratio": 2.73
+    }
+  },
+  "episodes": [
+    {
+      "task_type": "monogenic",
+      "seed": 1,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 2,
+      "candidate_count": 8,
+      "high_path_candidates": 8,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 3,
+      "candidate_count": 7,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 4,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 5,
+      "candidate_count": 5,
+      "high_path_candidates": 5,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 6,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 7,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 8,
+      "candidate_count": 7,
+      "high_path_candidates": 7,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 9,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "monogenic",
+      "seed": 10,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 1,
+      "candidate_count": 12,
+      "high_path_candidates": 12,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 2,
+      "candidate_count": 8,
+      "high_path_candidates": 8,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 3,
+      "candidate_count": 11,
+      "high_path_candidates": 11,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 4,
+      "candidate_count": 8,
+      "high_path_candidates": 8,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 5,
+      "candidate_count": 9,
+      "high_path_candidates": 9,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 6,
+      "candidate_count": 11,
+      "high_path_candidates": 11,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 7,
+      "candidate_count": 7,
+      "high_path_candidates": 7,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 8,
+      "candidate_count": 7,
+      "high_path_candidates": 7,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 9,
+      "candidate_count": 11,
+      "high_path_candidates": 11,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "oligogenic",
+      "seed": 10,
+      "candidate_count": 11,
+      "high_path_candidates": 11,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 1,
+      "candidate_count": 8,
+      "high_path_candidates": 8,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 2,
+      "candidate_count": 11,
+      "high_path_candidates": 11,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 3,
+      "candidate_count": 10,
+      "high_path_candidates": 9,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 4,
+      "candidate_count": 10,
+      "high_path_candidates": 10,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 5,
+      "candidate_count": 7,
+      "high_path_candidates": 7,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 6,
+      "candidate_count": 9,
+      "high_path_candidates": 9,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 7,
+      "candidate_count": 7,
+      "high_path_candidates": 7,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 8,
+      "candidate_count": 7,
+      "high_path_candidates": 7,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 9,
+      "candidate_count": 6,
+      "high_path_candidates": 6,
+      "bfs_hops_to_causal": 3
+    },
+    {
+      "task_type": "phenotype_mismatch",
+      "seed": 10,
+      "candidate_count": 8,
+      "high_path_candidates": 8,
+      "bfs_hops_to_causal": 3
+    }
+  ],
+  "threshold": 0.75,
+  "n_seeds": 10
+}

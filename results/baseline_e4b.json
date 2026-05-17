@@ -1,0 +1,2802 @@
+{
+  "model": "gemma4:e4b",
+  "n_episodes": 10,
+  "total_elapsed_s": 1701.6,
+  "results": {
+    "monogenic": {
+      "n": 10,
+      "mean_reward": 0.333,
+      "success_rate": 0.3,
+      "episodes": [
+        {
+          "seed": 1,
+          "task_type": "monogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_right_ventricular_cardiomyopathy",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:DSP",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:1060864",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1060864",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 25.6
+        },
+        {
+          "seed": 2,
+          "task_type": "monogenic",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:hypercholesterolemia",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:LDLR",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:171198",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:171198",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 16.9
+        },
+        {
+          "seed": 3,
+          "task_type": "monogenic",
+          "final_reward": 0.3,
+          "success": false,
+          "steps": 15,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:brugada_syndrome_3_long_qt_syndrome_8_timothy_syndrome_neurodevelopmental_disorder_with_hypotonia_language_delay_and_skeletal_defects_with_or_without_seizures",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CACNA1C",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:79478",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 5,
+              "action": "hop",
+              "node_id": "GENE:KIF7",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.3
+            }
+          ],
+          "elapsed_s": 109.5
+        },
+        {
+          "seed": 4,
+          "task_type": "monogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autism_iris_coloboma_delayed_speech_and_language_development_motor_delay_abnormality_of_vision",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:SNCA",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:29046",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:29046",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 30.6
+        },
+        {
+          "seed": 5,
+          "task_type": "monogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:3_beta_hydroxysteroid_dehydrogenase_deficiency",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:HSD3B2",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:1381162",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1381162",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 15.2
+        },
+        {
+          "seed": 6,
+          "task_type": "monogenic",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 9,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:pigmentary_retinopathy_macular_degeneration_abnormal_retinal_pigmentation_blurred_vision",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:PRPH2",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:PRPH2_variant",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 5,
+              "action": "hop",
+              "node_id": "GENE:ABCA4",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "hop",
+              "node_id": "GENE:ABCA4",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "hop",
+              "node_id": "VAR:105006",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:105006",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 60.1
+        },
+        {
+          "seed": 7,
+          "task_type": "monogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:adnp_related_multiple_congenital_anomalies_intellectual_disability_autism_spectrum_disorder",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:ADNP",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:1087099",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1087099",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 26.9
+        },
+        {
+          "seed": 8,
+          "task_type": "monogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autism_global_developmental_delay_cone_dystrophy",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:SRD5A3",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:1205707",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1205707",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 19.2
+        },
+        {
+          "seed": 9,
+          "task_type": "monogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:abnormal_facial_shape_seizure_short_stature_global_developmental_delay_intellectual_disability",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CUL4B",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:26378",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:26378",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 20.3
+        },
+        {
+          "seed": 10,
+          "task_type": "monogenic",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:cystic_fibrosis",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CFTR",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:22158",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:22158",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 19.9
+        }
+      ],
+      "elapsed_s": 344.2
+    },
+    "oligogenic": {
+      "n": 10,
+      "mean_reward": 0.192,
+      "success_rate": 0.1,
+      "episodes": [
+        {
+          "seed": 1,
+          "task_type": "oligogenic",
+          "final_reward": 0.1,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_right_ventricular_cardiomyopathy",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:DSP",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:456015",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:456015",
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.1
+            }
+          ],
+          "elapsed_s": 107.7
+        },
+        {
+          "seed": 2,
+          "task_type": "oligogenic",
+          "final_reward": 0.45,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_cardiomyopathy_with_variable_ectodermal_abnormalities",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:MYBPC3",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:51860",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:51860",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "hop",
+              "node_id": "GENE:PPP1R13L",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 10,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "hop",
+              "node_id": "GENE:MYBPC3",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "hop",
+              "node_id": "VAR:51860",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "hop",
+              "node_id": "VAR:51860",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:51860",
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 21,
+              "action": "hop",
+              "node_id": "GENE:MYBPC3",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "hop",
+              "node_id": "VAR:51860",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:51860",
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.45
+            }
+          ],
+          "elapsed_s": 116.0
+        },
+        {
+          "seed": 3,
+          "task_type": "oligogenic",
+          "final_reward": 0.1,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_cardiomyopathy_with_variable_ectodermal_abnormalities",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:PPP1R13L",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:963104",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:963104",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:963104",
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:963104",
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:963104",
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:963104",
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.1
+            }
+          ],
+          "elapsed_s": 123.2
+        },
+        {
+          "seed": 4,
+          "task_type": "oligogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_right_ventricular_cardiomyopathy",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:DSP",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:54095",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR_ID",
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:54095",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 87.2
+        },
+        {
+          "seed": 5,
+          "task_type": "oligogenic",
+          "final_reward": 0.1,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:abnormal_cardiovascular_system_morphology",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:NKX2-5",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:1358705",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:1358705",
+              "reward": 0.1
+            }
+          ],
+          "elapsed_s": 111.7
+        },
+        {
+          "seed": 6,
+          "task_type": "oligogenic",
+          "final_reward": 0.1,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_right_ventricular_cardiomyopathy",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:PKP2",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:444985",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444985",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444985",
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444985",
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444985",
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444985",
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.1
+            }
+          ],
+          "elapsed_s": 102.3
+        },
+        {
+          "seed": 7,
+          "task_type": "oligogenic",
+          "final_reward": 0.55,
+          "success": true,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:tuberous_sclerosis_complex",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:TSC1",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:58111",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:58111",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "hop",
+              "node_id": "GENE:TSC1",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 11,
+              "action": "hop",
+              "node_id": "VAR:58111",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 12,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:58111",
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:58111",
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:58111",
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.55
+            }
+          ],
+          "elapsed_s": 80.0
+        },
+        {
+          "seed": 8,
+          "task_type": "oligogenic",
+          "final_reward": 0.1,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:arrhythmogenic_right_ventricular_cardiomyopathy",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:DSP",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:444003",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:444003",
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.1
+            }
+          ],
+          "elapsed_s": 78.4
+        },
+        {
+          "seed": 9,
+          "task_type": "oligogenic",
+          "final_reward": 0.4,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:familial_hypercholesterolaemia",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:LDLR",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:228120",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 21,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:228120",
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.4
+            }
+          ],
+          "elapsed_s": 110.5
+        },
+        {
+          "seed": 10,
+          "task_type": "oligogenic",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 25,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:cystic_fibrosis",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CFTR",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:1176320",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "hop",
+              "node_id": "GENE:MYH6",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "hop",
+              "node_id": "GENE:MYH6",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "hop",
+              "node_id": "GENE:MYH6",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 11,
+              "action": "hop",
+              "node_id": "GENE:MYH6",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 12,
+              "action": "hop",
+              "node_id": "VAR:552173",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 13,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:552173",
+              "reward": 0.01
+            },
+            {
+              "step": 14,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 15,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 16,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 17,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:552173",
+              "reward": 0.01
+            },
+            {
+              "step": 18,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 19,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 20,
+              "action": "backtrack",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.04
+            },
+            {
+              "step": 21,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 22,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 23,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 24,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 25,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 189.1
+        }
+      ],
+      "elapsed_s": 1106.1
+    },
+    "phenotype_mismatch": {
+      "n": 10,
+      "mean_reward": 0.441,
+      "success_rate": 0.4,
+      "episodes": [
+        {
+          "seed": 1,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autism_seizure",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CHRNA1",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:33418",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:33418",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 21.7
+        },
+        {
+          "seed": 2,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:long_qt_syndrome",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:KCNQ1",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:67806",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:67806",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 20.3
+        },
+        {
+          "seed": 3,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autism_seizure",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CHRNA1",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:33418",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:33418",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 16.7
+        },
+        {
+          "seed": 4,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.4,
+          "success": false,
+          "steps": 5,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autism_seizure",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CHRNA1",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:33418",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.4
+            }
+          ],
+          "elapsed_s": 31.8
+        },
+        {
+          "seed": 5,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autism_seizure",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CHRNA1",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:33418",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:33418",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 24.7
+        },
+        {
+          "seed": 6,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:long_qt_syndrome",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:KCNH2",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:78121",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:78121",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 16.1
+        },
+        {
+          "seed": 7,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:abnormal_facial_shape_seizure_short_stature_global_developmental_delay_intellectual_disability",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CUL4B",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:26378",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:26378",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 24.4
+        },
+        {
+          "seed": 8,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.01,
+          "success": false,
+          "steps": 10,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:autistic_behavior_seizure",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:CHD2",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:218716",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 4,
+              "action": "hop",
+              "node_id": "VAR:204022",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 5,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 6,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 7,
+              "action": "summarise_trail",
+              "node_id": null,
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 8,
+              "action": "hop",
+              "node_id": "VAR:chd2_p223R",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 9,
+              "action": "hop",
+              "node_id": "VAR:CHD2_105del",
+              "variant_id": null,
+              "reward": 0.01
+            },
+            {
+              "step": 10,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:CHD2_105del",
+              "reward": 0.01
+            }
+          ],
+          "elapsed_s": 61.4
+        },
+        {
+          "seed": 9,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:marfan_syndrome",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:FBN1",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:38652",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:38652",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 14.1
+        },
+        {
+          "seed": 10,
+          "task_type": "phenotype_mismatch",
+          "final_reward": 0.99,
+          "success": true,
+          "steps": 4,
+          "step_log": [
+            {
+              "step": 1,
+              "action": "hop",
+              "node_id": "DIS:long_qt_syndrome",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 2,
+              "action": "hop",
+              "node_id": "GENE:KCNH2",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 3,
+              "action": "hop",
+              "node_id": "VAR:197147",
+              "variant_id": null,
+              "reward": 0.14
+            },
+            {
+              "step": 4,
+              "action": "flag_causal",
+              "node_id": null,
+              "variant_id": "VAR:197147",
+              "reward": 0.99
+            }
+          ],
+          "elapsed_s": 20.0
+        }
+      ],
+      "elapsed_s": 251.2
+    }
+  }
+}

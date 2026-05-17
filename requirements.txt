@@ -1,0 +1,19 @@
+# Core
+ollama>=0.2.0
+fastapi>=0.110.0
+uvicorn>=0.29.0
+gradio>=6.0.0
+pydantic>=2.7.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+rich>=13.7.0
+nest-asyncio>=1.6.0
+httpx>=0.27.0
+
+# Training only (run on Colab T4/A100 — NOT the local 4060 Ti)
+# unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+# trl>=0.9.0
+# peft>=0.10.0
+# accelerate>=0.30.0
+# bitsandbytes>=0.43.0
+# datasets>=2.19.0

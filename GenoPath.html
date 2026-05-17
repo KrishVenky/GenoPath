@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <title>GenoPath · Rare Disease Reasoning</title>
-<meta name="viewport" content="width=1440" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -765,9 +765,118 @@
     color: var(--dim); font-family: 'JetBrains Mono', monospace;
     font-size: 10px; margin-top: 4px;
   }
+
+  /* =====================================================================
+     MOBILE RESPONSIVE (≤ 767px)
+     Phone enters via /camera → redirected with ?episode_id → watches
+     the graph run. Left panel (patient input) not needed during playback.
+     ===================================================================== */
+
+  /* Mobile top bar — hidden on desktop */
+  .mobile-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    gap: 10px;
+  }
+  .mobile-bar .mb-brand { font-size: .85rem; font-weight: 700; color: var(--primary-2); }
+  .mobile-bar .mb-status { display: flex; align-items: center; gap: 6px; font-size: .75rem; color: var(--muted); }
+  .mobile-bar .mb-counter {
+    font-size: .75rem; color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mobile-bar .mb-step { font-weight: 600; color: var(--text); }
+  .mobile-bar .mb-reward { color: var(--good); font-weight: 600; }
+
+  @media (max-width: 767px) {
+    body { overflow-y: auto; overflow-x: hidden; }
+
+    .mobile-bar { display: flex; }
+
+    /* Stack the three panels vertically */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      min-height: 100dvh;
+      width: 100%;
+    }
+
+    /* Left panel: hide entirely — /camera handles intake on mobile */
+    .panel.left { display: none; }
+
+    /* Center: graph viewport, fixed height */
+    .panel.center {
+      height: 52vw;
+      min-height: 260px;
+      max-height: 380px;
+      overflow: hidden;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* Hide log cards on mobile — too cramped; breadcrumb covers it */
+    .agent-log { display: none !important; }
+
+    /* Breadcrumb scrollable horizontally */
+    .breadcrumb { flex-wrap: nowrap; overflow-x: auto; }
+
+    /* Hide legend on mobile */
+    .legend { display: none; }
+
+    /* Overlays: smaller text */
+    .overlay { padding: 8px 10px; font-size: 11px; }
+    .step-num, #reward-num { font-size: 1.1rem; }
+
+    /* Right panel: scrollable list fills remaining space */
+    .panel.right {
+      border-left: none;
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+    .panel-scroll { padding: 14px 14px 40px; }
+
+    /* Wider pheno tags on mobile */
+    .pheno-tag { font-size: .78rem; padding: 4px 9px; }
+
+    /* Candidate table: hide Score column header, compress */
+    .cand-table th:nth-child(3),
+    .cand-table td:nth-child(3) { display: none; }
+
+    /* Result card full width */
+    .result-card { margin: 0; border-radius: 10px; }
+
+    /* Tooltip: pin to bottom on mobile */
+    .tooltip {
+      position: fixed;
+      bottom: 0; left: 0; right: 0; top: auto;
+      border-radius: 12px 12px 0 0;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
+
+<!-- Mobile-only top bar (hidden on desktop via CSS) -->
+<div class="mobile-bar">
+  <span class="mb-brand">GenoPath</span>
+  <span class="mb-status">
+    <span id="m-conn-dot" class="dot"></span>
+    <span id="m-conn-label">Connecting…</span>
+  </span>
+  <span class="mb-counter">
+    <span>Step <span class="mb-step" id="m-step">0</span></span>
+    <span class="mb-reward" id="m-reward">+0.00</span>
+  </span>
+</div>
 
 <div class="app">
 
@@ -983,6 +1092,10 @@ async function checkHealth() {
     dot.className = 'dot online';
     label.textContent = 'Backend online';
     meta.textContent = (data.model || 'gemma4:e4b');
+    const md = document.getElementById('m-conn-dot');
+    const ml = document.getElementById('m-conn-label');
+    if (md) md.className = 'dot online';
+    if (ml) ml.textContent = 'gemma4:e4b';
     if (data.graph_nodes) {
       document.getElementById('graph-size').textContent = data.graph_nodes.toLocaleString();
     }
@@ -1099,9 +1212,11 @@ function ingestStep(obs) {
   const prev = state.current;
   state.current = obs;
 
-  // animate counters
+  // animate counters (desktop + mobile bar)
   animateNumber('step-num', obs.step);
   animateNumber('reward-num', obs.cumulative_reward, true);
+  animateNumber('m-step', obs.step);
+  animateNumber('m-reward', obs.cumulative_reward, true);
 
   const delta = prev ? (obs.cumulative_reward - prev.cumulative_reward) : obs.cumulative_reward;
   const dEl = document.getElementById('reward-delta');
